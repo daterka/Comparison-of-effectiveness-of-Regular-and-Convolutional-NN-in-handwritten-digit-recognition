@@ -1,10 +1,11 @@
 # *****Comparison of effectiveness of Regular and Convolutional Neural Networks in handwritten series recognition.***** 
 
-### **DataSet :** MNIST
+#### **DataSet :** MNIST
 
-### **CPU :** Intel i7-8750H 2.2 GHz (***TurboBoost off***)
+#### **CPU :** Intel i7-8750H 2.2 GHz (***TurboBoost off***)
 
-#### **RNN**
+## **RNN**
+
 #### **batch size :** 128
 #### **number of epochs :** 8 
 #### **number of parameters :** 12 975 
@@ -24,12 +25,12 @@
 
 ## **CNN**
 
-#### ** batch size :** 128 
-#### ** number of epochs :** 8 
-#### ** number of parameters :** 12 980 
-#### ** accuracy :** ~96.5% 
-#### ** loss :** ~0.104 
-#### ** mse :** ~0.0049 
+#### **batch size :** 128 
+#### **number of epochs :** 8 
+#### **number of parameters :** 12 980 
+#### **accuracy :** ~96.5% 
+#### **loss :** ~0.104 
+#### **mse :** ~0.0049 
 #### **time of training :** ~50s 
 
 ### **Accuracy plot :**
