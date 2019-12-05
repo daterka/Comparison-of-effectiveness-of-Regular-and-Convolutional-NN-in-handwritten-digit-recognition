@@ -1,6 +1,7 @@
 # *****Comparison of effectiveness of Regular and Convolutional Neural Networks in handwritten series recognition.***** 
 
 #### **DataSet :** [MNIST](http://yann.lecun.com/exdb/mnist/)
+#### environment : python 3 + keras
 
 #### **CPU :** Intel i7-8750H 2.2 GHz (***TurboBoost off***)
 
