@@ -1,8 +1,8 @@
 import keras
 from keras.datasets import mnist
-from keras.models import Sequential
+from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
-import matplotlib.pyplot as plt
+from  matplotlib import pyplot as plt
 import numpy as np
 import timeit
 import time
@@ -11,6 +11,10 @@ populationSize = 10
 metric = 'loss'
 # metric = 'accuracy'
 # metric = 'mse'
+
+modelArchFilePatch = "saved-models/rnn-model-arch.json"
+modelWeightFilePatch = "saved-models/rnn-model-weights.h5"
+plotDir = "plots/"
 
 
 class TimeCallback(keras.callbacks.Callback):
@@ -69,9 +73,9 @@ class RegularNeuralNetwork:
             loss='categorical_crossentropy', 
             metrics=['accuracy', 'mae'])
 
-    def trainModel(self):
+    def trainModel(self, verbose = 0):
         # self.fp = 'weights.{epoch:02d}-{val_accu:.2f}.hdf5'
-        self.fp = 'weights_best.hdf5'
+        self.fp = 'saved-models/rnn_weights_best.hdf5'
 
         checkPointCallback = keras.callbacks.callbacks.ModelCheckpoint(
             filepath = self.fp, 
@@ -91,7 +95,7 @@ class RegularNeuralNetwork:
             self.y_train_cat, 
             batch_size=self.batch_size, 
             epochs=self.epochs, 
-            verbose=0, 
+            verbose=verbose, 
             validation_split=0.1,
             callbacks=callbacksList)
 
@@ -99,11 +103,11 @@ class RegularNeuralNetwork:
 
         self.timeOfTraining = self.timeCallback.timeOfTraining
 
-    def evaluateModel(self):
+    def evaluateModel(self, verbose = 0):
         self.metrics = self.model.evaluate(
             self.x_test, 
             self.y_test_cat, 
-            verbose=1)
+            verbose=verbose)
 
     def results(self):
         print('id : ', self.id)
@@ -114,13 +118,17 @@ class RegularNeuralNetwork:
 
 
     
-    def saveModelToJSON(self):
+    def saveModel(self):
         self.model_json = self.model.to_json()
-        with open("rnn-model.json", "w") as json_file:
+        with open(modelArchFilePatch, "w") as json_file:
             json_file.write(self.model_json)
 
-        self.model.save_weights("rnn-model.h5")
+        self.model.save_weights(modelWeightFilePatch)
         print("RNN model saved")
+
+    def loadModel(self):
+        self.model = model_from_json(modelArchFilePatch)
+        self.model.load_weights(modelWeightFilePatch)
 
     def modelAccuracyPlot(self):
         plt.plot(self.history.history['accuracy'])
@@ -129,7 +137,8 @@ class RegularNeuralNetwork:
         plt.ylabel('accuracy')
         plt.xlabel('epoch')
         plt.legend(['training', 'validation'], loc='best')
-        plt.show()
+        plt.savefig(plotDir + 'rnn-accu-plt.png')
+        # plt.show()
 
     def modelLossPlot(self):
         plt.plot(self.history.history['loss'])
@@ -138,7 +147,8 @@ class RegularNeuralNetwork:
         plt.ylabel('loss')
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
-        plt.show()
+        plt.savefig(plotDir + 'rnn-loss-plt.png')
+        # plt.show()
 
     def modelMSEPlot(self):
         plt.plot(self.history.history['accuracy'])
@@ -147,7 +157,8 @@ class RegularNeuralNetwork:
         plt.ylabel('mae')
         plt.xlabel('epoch')
         plt.legend(['training', 'validation'], loc='best')
-        plt.show()
+        plt.savefig(plotDir + 'rnn-mse-plt.png')
+        # plt.show()
 
     def printDigit(self):
         pass
@@ -185,7 +196,7 @@ def main():
         rnn.defineModelArchitecture()
         rnn.buildModel()
         rnn.trainModel()
-        rnn.evaluateModel()
+        rnn.evaluateModel(1)
         rnn.results()
         population.append(rnn)
 
@@ -199,8 +210,9 @@ def main():
     best.modelLossPlot()
     best.modelMSEPlot()
 
+    best.saveModel()
 
-    
+
 if __name__ == "__main__":
     main()
         
