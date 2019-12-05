@@ -2,6 +2,7 @@ import keras
 from keras.datasets import mnist
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+from keras.losses import mean_squared_error as mse
 from  matplotlib import pyplot as plt
 import numpy as np
 import timeit
@@ -66,15 +67,17 @@ class RegularNeuralNetwork:
 
     def modelSummary(self):
         self.model.summary()
+
+    def mse_pred(self, y_true, y_pred):
+        return mse(y_true, y_pred)
     
     def buildModel(self):
         self.model.compile(
             optimizer="adam", 
             loss='categorical_crossentropy', 
-            metrics=['accuracy', 'mae'])
+            metrics=['accuracy', mse])
 
     def trainModel(self, verbose = 0):
-        # self.fp = 'weights.{epoch:02d}-{val_accu:.2f}.hdf5'
         self.fp = 'saved-models/rnn_weights_best.hdf5'
 
         checkPointCallback = keras.callbacks.callbacks.ModelCheckpoint(
@@ -113,7 +116,7 @@ class RegularNeuralNetwork:
         print('id : ', self.id)
         print('Test loss:', self.metrics[0])
         print('Test accuracy:', self.metrics[1])
-        print('Test mae:', self.metrics[2])
+        print('Test mse:', self.metrics[2])
         print('Training duration : ', self.timeOfTraining, 's')
 
 
@@ -152,9 +155,9 @@ class RegularNeuralNetwork:
 
     def modelMSEPlot(self):
         plt.plot(self.history.history['accuracy'])
-        plt.plot(self.history.history['mae'])
-        plt.title('model mae')
-        plt.ylabel('mae')
+        plt.plot(self.history.history['mean_squared_error'])
+        plt.title('model mse')
+        plt.ylabel('mse')
         plt.xlabel('epoch')
         plt.legend(['training', 'validation'], loc='best')
         plt.savefig(plotDir + 'rnn-mse-plt.png')
@@ -183,7 +186,7 @@ def pickBest(population, metric):
         population.sort(reverse = False, key=lambda e: e.metrics[0])
     elif(metric == 'accuracy'):
         population.sort(reverse = True, key=lambda e: e.metrics[1])
-    elif(metric == 'mae'):
+    elif(metric == 'mse'):
         population.sort(reverse = False, key=lambda e: e.metrics[2])
 
     return population[0]
