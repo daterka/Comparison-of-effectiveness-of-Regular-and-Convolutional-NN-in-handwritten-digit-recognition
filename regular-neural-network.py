@@ -8,6 +8,10 @@ import timeit
 import time
 
 populationSize = 10
+metric = 'loss'
+# metric = 'accuracy'
+# metric = 'mse'
+
 
 class TimeCallback(keras.callbacks.Callback):
     def on_train_begin(self, logs={}):
@@ -42,8 +46,8 @@ class RegularNeuralNetwork:
     x_train /= 255
     x_test /= 255
 
-    y_train = keras.utils.to_categorical(y_train, num_classes)
-    y_test = keras.utils.to_categorical(y_test, num_classes)
+    y_train_cat = keras.utils.to_categorical(y_train, num_classes)
+    y_test_cat = keras.utils.to_categorical(y_test, num_classes)
     print("Data formatted")
 
 
@@ -60,7 +64,10 @@ class RegularNeuralNetwork:
         self.model.summary()
     
     def buildModel(self):
-        self.model.compile(optimizer="adam", loss='categorical_crossentropy', metrics=['accuracy'])
+        self.model.compile(
+            optimizer="adam", 
+            loss='categorical_crossentropy', 
+            metrics=['accuracy', 'mae'])
 
     def trainModel(self):
         # self.fp = 'weights.{epoch:02d}-{val_accu:.2f}.hdf5'
@@ -81,7 +88,7 @@ class RegularNeuralNetwork:
 
         self.history = self.model.fit(
             self.x_train, 
-            self.y_train, 
+            self.y_train_cat, 
             batch_size=self.batch_size, 
             epochs=self.epochs, 
             verbose=0, 
@@ -93,23 +100,27 @@ class RegularNeuralNetwork:
         self.timeOfTraining = self.timeCallback.timeOfTraining
 
     def evaluateModel(self):
-        self.loss, self.accuracy = self.model.evaluate(self.x_test, self.y_test, verbose=1)
+        self.metrics = self.model.evaluate(
+            self.x_test, 
+            self.y_test_cat, 
+            verbose=1)
 
     def results(self):
-        print('Test loss:', self.loss)
-        print('Test accuracy:', self.accuracy)
-        # print('Training duration : ', self.trainingDuration)
+        print('id : ', self.id)
+        print('Test loss:', self.metrics[0])
+        print('Test accuracy:', self.metrics[1])
+        print('Test mae:', self.metrics[2])
         print('Training duration : ', self.timeOfTraining, 's')
 
 
     
     def saveModelToJSON(self):
         self.model_json = self.model.to_json()
-        with open("model.json", "w") as json_file:
+        with open("rnn-model.json", "w") as json_file:
             json_file.write(self.model_json)
 
-        self.model.save_weights("model.h5")
-        print("model saved")
+        self.model.save_weights("rnn-model.h5")
+        print("RNN model saved")
 
     def modelAccuracyPlot(self):
         plt.plot(self.history.history['accuracy'])
@@ -129,13 +140,42 @@ class RegularNeuralNetwork:
         plt.legend(['train', 'test'], loc='upper left')
         plt.show()
 
-    def peakBestWeights(self):
+    def modelMSEPlot(self):
+        plt.plot(self.history.history['accuracy'])
+        plt.plot(self.history.history['mae'])
+        plt.title('model mae')
+        plt.ylabel('mae')
+        plt.xlabel('epoch')
+        plt.legend(['training', 'validation'], loc='best')
+        plt.show()
+
+    def printDigit(self):
         pass
 
+    def predict(self, first = -1, last = -1):
+        if(last != -1):
+            self.prediction = self.model.predict_classes(self.x_test[first:last])
+            print(self.prediction)
+            print(self.y_test[first:last])
+        elif(first != 0):
+            self.prediction = self.model.predict_classes(self.x_test[:first])
+            print(self.prediction)
+            print(self.y_test[:first])
+        else:
+            self.prediction = self.model.predict_classes(self.x_test)
+            print(self.prediction)
+            print(self.y_test)
 
 
-def sortKey(e): 
-    return e.accuracy
+def pickBest(population, metric):
+    if(metric == 'loss'):
+        population.sort(reverse = False, key=lambda e: e.metrics[0])
+    elif(metric == 'accuracy'):
+        population.sort(reverse = True, key=lambda e: e.metrics[1])
+    elif(metric == 'mae'):
+        population.sort(reverse = False, key=lambda e: e.metrics[2])
+
+    return population[0]
 
 
 def main():
@@ -149,13 +189,16 @@ def main():
         rnn.results()
         population.append(rnn)
 
-    population.sort(reverse = True, key=sortKey)
-
-    print('Best model no.', population[0].id, ' : ')
-    population[0].results()
-
-
     
+
+    best = pickBest(population, metric)
+
+    print('\nBest model:')
+    best.results()
+    best.modelAccuracyPlot()
+    best.modelLossPlot()
+    best.modelMSEPlot()
+
 
     
 if __name__ == "__main__":
