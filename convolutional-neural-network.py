@@ -141,6 +141,7 @@ class ConvolutionalNeuralNetwork:
         plt.legend(['training', 'validation'], loc='best')
         plt.savefig(plotDir + 'cnn-accu-plt.png')
         # plt.show()
+        plt.close()
 
     def modelLossPlot(self):
         plt.plot(self.history.history['loss'])
@@ -148,9 +149,10 @@ class ConvolutionalNeuralNetwork:
         plt.title('model loss')
         plt.ylabel('loss')
         plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper left')
+        plt.legend(['train', 'test'], loc='best')
         plt.savefig(plotDir + 'cnn-loss-plt.png')
         # plt.show()
+        plt.close()
 
     def modelMSEPlot(self):
         plt.plot(self.history.history['accuracy'])
@@ -161,6 +163,7 @@ class ConvolutionalNeuralNetwork:
         plt.legend(['training', 'validation'], loc='best')
         plt.savefig(plotDir + 'cnn-mse-plt.png')
         # plt.show()
+        plt.close()
 
     def printDigit(self):
         pass

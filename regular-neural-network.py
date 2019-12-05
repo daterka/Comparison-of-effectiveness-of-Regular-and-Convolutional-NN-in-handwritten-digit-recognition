@@ -142,6 +142,7 @@ class RegularNeuralNetwork:
         plt.legend(['training', 'validation'], loc='best')
         plt.savefig(plotDir + 'rnn-accu-plt.png')
         # plt.show()
+        plt.close()
 
     def modelLossPlot(self):
         plt.plot(self.history.history['loss'])
@@ -149,9 +150,10 @@ class RegularNeuralNetwork:
         plt.title('model loss')
         plt.ylabel('loss')
         plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper left')
+        plt.legend(['train', 'test'], loc='best')
         plt.savefig(plotDir + 'rnn-loss-plt.png')
         # plt.show()
+        plt.close()
 
     def modelMSEPlot(self):
         plt.plot(self.history.history['accuracy'])
@@ -162,6 +164,7 @@ class RegularNeuralNetwork:
         plt.legend(['training', 'validation'], loc='best')
         plt.savefig(plotDir + 'rnn-mse-plt.png')
         # plt.show()
+        plt.close()
 
     def printDigit(self):
         pass
