@@ -5,13 +5,13 @@
 ### **CPU :** Intel i7-8750H 2.2 GHz (***TurboBoost off***)
 
 ## **RNN**
-### **batch size :** 128
-### **number of epochs :** 8 
-### **number of parameters :** 12 975 
-### **accuracy :** ~94.5% 
-### **loss :** ~0.173 
-### **mse :** ~0.0079 
-### **time of training :** ~10s 
+## **batch size :** 128
+## **number of epochs :** 8 
+## **number of parameters :** 12 975 
+## **accuracy :** ~94.5% 
+## **loss :** ~0.173 
+## **mse :** ~0.0079 
+## **time of training :** ~10s 
 
 
 ### **Accuracy plot :**
@@ -24,13 +24,13 @@
 
 ## **CNN**
 
-### ** batch size :** 128 
-### ** number of epochs :** 8 
-### ** number of parameters :** 12 980 
-### ** accuracy :** ~96.5% 
-### ** loss :** ~0.104 
-### ** mse :** ~0.0049 
-### **time of training :** ~50s 
+## ** batch size :** 128 
+## ** number of epochs :** 8 
+## ** number of parameters :** 12 980 
+## ** accuracy :** ~96.5% 
+## ** loss :** ~0.104 
+## ** mse :** ~0.0049 
+## **time of training :** ~50s 
 
 ### **Accuracy plot :**
 ![AccuracyPlot](./plots/cnn-accu-plt.png)
